@@ -1,3 +1,7 @@
+Original repository can be found at https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution.
+This repository has been modified to use jpg image files instead of tiff and to perform transfer learning using the orginal trained models as base models. Original solution description is below. 
+
+
 SpaceNet 3 – Road Detection Marathon Match - Solution Description
 
 Overview

@@ -1,0 +1,7 @@
+augment_crop_period: null
+automatic_clipping: 1
+conv5_params: [16, 32]
+drop_margin: 0
+epoch_milestones: [3, 4, 5, 6]
+loss_size_average: true
+training_set: w

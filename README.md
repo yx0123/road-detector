@@ -37,7 +37,7 @@ TBC
 
 
 
-#Original solution description is below. 
+# Original solution description is below. 
 
 
 SpaceNet 3 – Road Detection Marathon Match - Solution Description

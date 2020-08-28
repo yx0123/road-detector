@@ -1,7 +1,7 @@
 Original repository can be found at https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution.
 This repository has been modified to use jpg image files instead of tiff and to perform transfer learning using the orginal trained models as base models. 
 
-Instructions for running on Ubuntu:
+**Instructions for running on Ubuntu:**
 1) Install Docker Engine on Ubuntu by following the installation methods here: https://docs.docker.com/engine/install/ubuntu/
 2) Download or clone this repository.
 3) Download train and test dataset from https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing
@@ -26,7 +26,7 @@ sudo docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata --ipc=host -it road
 
 <br />
 
-Instructions for running on Ubuntu:
+**Instructions for running on Windows:**
 TBC
 
 
@@ -37,7 +37,7 @@ TBC
 
 
 
-Original solution description is below. 
+#Original solution description is below. 
 
 
 SpaceNet 3 – Road Detection Marathon Match - Solution Description

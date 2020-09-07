@@ -29,7 +29,7 @@ sudo docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata --ipc=host -it road
 **Instructions for running on Windows:**
 <br />
 Docker Desktop on Windows requires Hyper-V but it is not available on Windows Home. Here, we will use Docker Toolbox which requires a 64-bit operating system running Windows 7 or higher. Additionally, virtualization must be supported. 
-1) Check if virtualizatin is enabled by going to Task Manager and going to the "Performance Tab". If it is disabled, enable it in the BIOS.
+1) Check if virtualizatin is enabled by going to Task Manager and going to the "Performance" tab. If it is disabled, enable it in the BIOS.
 2) Follow the instructions given in Part 2 of [Docker on Windows without Hyper-V](https://poweruser.blog/docker-on-windows-10-without-hyper-v-a529897ed1cc) to install and setup Docker
 3) Open a terminal window (eg Command Prompt) and run 
 ```

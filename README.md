@@ -1,5 +1,5 @@
 Original repository can be found at https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution.
-This repository has been modified to use jpg image files instead of tiff and to perform transfer learning using the orginal trained models as base models. 
+This repository has been modified to use jpg image files instead of tiff and runs on CPU instead of GPU. Additionally, `train.py` has been edited such that it performs transfer learning by modifying only the classifier layers of the pretrained models. To train all the layers of the network, set `base_model = None` in  `train.py`.
 
 **Instructions for running on Ubuntu:**
 1) Install Docker Engine on Ubuntu by following the installation methods here: https://docs.docker.com/engine/install/ubuntu/
@@ -27,8 +27,40 @@ sudo docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata --ipc=host -it road
 <br />
 
 **Instructions for running on Windows:**
-TBC
+Docker Desktop on Windows requires Hyper-V but it is not available on Windows Home. Here, I will use Docker Toolbox which requires a 64-bit operating system running Windows 7 or higher. Additionally, virtualization must be supported. 
+1) Check if virtualizatin is enabled by going to Task Manager and going to the "Performance Tab". If it is disabled, enable it in the BIOS.
+2) Follow the instructions given in Part 2 of [Docker on Windows without Hyper-V](https://poweruser.blog/docker-on-windows-10-without-hyper-v-a529897ed1cc) to install and setup Docker
+3) Open a terminal window (eg Command Prompt) and run 
+```
+git config --global core.autocrlf input
+```
+4) Clone this directory
+```
+git clone https://github.com/yx0123/road-detector.git
+```
+5) Download train and test dataset from https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing and copy it into C:\Users\<your_username>. Otherwise, you have to [share the directory with VirtualBox VM](https://headsigned.com/posts/mounting-docker-volumes-with-docker-toolbox-for-windows/). This will allow the data folder to be mounted to the docker container subsequently.
 
+6) Build docker image
+```
+docker build -t road-detector $PACKAGE_PATH 
+```
+7) Run docker container. $DATA_PATH is the path on your host device containing the downloaded images. $WDATA_PATH is where the where the results will be stored. 
+```
+docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata -it road-detector
+```
+Example assuming the data is in C:\Users\<your_username>
+```
+docker run -v /c/Users/<your_username>/data:/data:ro -v /c/Users/<your_username>/wdata:/wdata -it road-detector
+```
+8) Training can be done by calling
+```
+./train.sh /data/Train
+```
+9) Testing can be done by calling
+```
+./test.sh /data/Test output
+```
+10) View predictions by navigating to $WDATA_PATH on your host device.
 
 
 <br />

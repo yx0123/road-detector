@@ -1,10 +1,13 @@
-Original repository can be found at https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution.
+Original repository can be found [here](https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution).
 This repository has been modified to use jpg image files instead of tiff and runs on CPU instead of GPU. Additionally, `train.py` has been edited such that it performs transfer learning by modifying only the classifier layers of the pretrained models. To train all the layers of the network, set `base_model = None` in  `train.py`.
 
 **Instructions for running on Ubuntu:**
-1) Install Docker Engine on Ubuntu by following the installation methods here: https://docs.docker.com/engine/install/ubuntu/
-2) Download or clone this repository.
-3) Download train and test dataset from https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing
+1) Install Docker Engine on Ubuntu by following the installation methods [here](https://docs.docker.com/engine/install/ubuntu/)
+2) Clone this repository.
+```
+git clone https://github.com/yx0123/road-detector.git
+```
+3) Download train and test dataset [here](https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing)
 4) Build docker image
 ```
 sudo docker build -t road-detector $PACKAGE_PATH 
@@ -39,7 +42,7 @@ git config --global core.autocrlf input
 ```
 git clone https://github.com/yx0123/road-detector.git
 ```
-5) Download train and test dataset from https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing and copy it into C:\Users\<your_username>. Otherwise, you have to [share the directory with VirtualBox VM](https://headsigned.com/posts/mounting-docker-volumes-with-docker-toolbox-for-windows/). This will allow the data folder to be mounted to the docker container subsequently.
+5) Download train and test dataset [here](https://drive.google.com/file/d/1s5go6TnwZVtt0OCukwWbQcIum_LRANEp/view?usp=sharing). Copy it into C:\Users\\<your_username>, or [share the directory containing the data with VirtualBox VM](https://headsigned.com/posts/mounting-docker-volumes-with-docker-toolbox-for-windows/). This will allow the data folder to be mounted to the docker container subsequently.
 
 6) Build docker image
 ```
@@ -49,7 +52,7 @@ docker build -t road-detector $PACKAGE_PATH
 ```
 docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata -it road-detector
 ```
-Example assuming the data is in C:\Users\<your_username>
+Example assuming the data is in C:\Users\\<your_username>
 ```
 docker run -v /c/Users/<your_username>/data:/data:ro -v /c/Users/<your_username>/wdata:/wdata -it road-detector
 ```

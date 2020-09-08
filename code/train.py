@@ -59,8 +59,11 @@ output_opt = dict(classes=3, stride=4, atom_size=8, size=40)
 batch_size_per_gpu = 12
 lr_gamma = 0.2
 
-#batch_size = n_gpu * batch_size_per_gpu
-batch_size = 12
+if n_gpu = 0:
+    batch_size = 12
+else:
+    batch_size = n_gpu * batch_size_per_gpu
+
 epoch_milestones = model_desc['epoch_milestones']
 n_epochs = epoch_milestones[-1]
 
@@ -243,13 +246,19 @@ def main_training(base_model=None, model_root=None, load_checkpoint=None):
             num_ftrs = getattr(model_ft, fc_layer_name).in_channels
             setattr(model_ft, fc_layer_name, nn.Conv2d(num_ftrs, n_classes*n_atom_outputs, kernel_size=1, bias=True))
             model_ft = nn.DataParallel(model_ft)
+            
         else:
-            model_ft = torch.load(base_model, map_location={'cuda:0': 'cpu'})
+            if use_gpu:
+                model_ft = torch.load(base_model)
+            else:
+                model_ft = torch.load(base_model, map_location={'cuda:0': 'cpu'})
+                
             model_ft = model_ft.module
             for param in model_ft.parameters():
                 param.requires_grad = False
             for param in model_ft.classifier.parameters():
                 param.requires_grad = True
+        
         if use_gpu:
             model_ft = model_ft.cuda()
 

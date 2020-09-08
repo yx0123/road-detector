@@ -12,7 +12,7 @@ import rd
 
 from PIL import __version__; assert __version__>"4.3.0.post0"
 
-n_gpu = 1
+n_gpu = torch.cuda.device_count()
 
 def save_prediction(model, model_root, model_desc, batch_size):
     model.train(False)
@@ -48,7 +48,10 @@ def save_prediction(model, model_root, model_desc, batch_size):
         crops = (img_padded[:,ij//n_blocks*crop_step:,ij%n_blocks*crop_step:][:,:crop_size,:crop_size] for ij in range(n_blocks**2))
         img_outputs = []
         for _,g in itertools.groupby(enumerate(crops), key=lambda iv: iv[0]//batch_size):
-            batch = torch.stack([iv[1] for iv in g])
+            if n_gpu > 0:
+                batch = torch.stack([iv[1] for iv in g]).cuda()
+            else:
+                batch = torch.stack([iv[1] for iv in g])
             batch = Variable(batch)
             outputs = model(batch)
             if len(outputs.shape)==4:
@@ -94,6 +97,9 @@ if __name__=='__main__':
         model_path = 'trained_models/' + os.path.basename(yaml_path[:-5]) + '.pth'
         model_root = os.path.basename(yaml_path)[:-5]
         batch_size = 2
-        model = torch.load(model_path, map_location={'cuda:0': 'cpu'})
-        model.device_ids = list(range(torch.cuda.device_count()))
+        if n_gpu > 0:
+            model = torch.load(model_path).cuda()
+        else:
+            model = torch.load(model_path, map_location={'cuda:0': 'cpu'})
+        model.device_ids = list(range(n_gpu))
         save_prediction(model, model_root, model_desc, batch_size)

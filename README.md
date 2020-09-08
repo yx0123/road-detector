@@ -1,7 +1,7 @@
 Original repository can be found [here](https://github.com/SpaceNetChallenge/RoadDetector/tree/master/pfr-solution).
 This repository has been modified to use jpg image files instead of tiff and runs on CPU instead of GPU. Additionally, `train.py` has been edited such that it performs transfer learning by modifying only the classifier layers of the pretrained models. To train all the layers of the network, set `base_model = None` in  `train.py`.
 
-**Instructions for running on Ubuntu:**
+### Instructions for running on Ubuntu:
 1) Install Docker Engine on Ubuntu by following the installation methods [here](https://docs.docker.com/engine/install/ubuntu/)
 2) Clone this repository.
 ```
@@ -29,8 +29,7 @@ sudo docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata --ipc=host -it road
 
 <br />
 
-**Instructions for running on Windows:**
-<br />
+### Instructions for running on Windows:
 Docker Desktop on Windows requires Hyper-V but it is not available on Windows Home. Here, we will use Docker Toolbox which requires a 64-bit operating system running Windows 7 or higher. Additionally, virtualization must be supported. 
 1) Check if virtualizatin is enabled by going to Task Manager and going to the "Performance" tab. If it is disabled, enable it in the BIOS.
 2) Follow the instructions given in Part 2 of [Docker on Windows without Hyper-V](https://poweruser.blog/docker-on-windows-10-without-hyper-v-a529897ed1cc) to install and setup Docker
@@ -38,7 +37,7 @@ Docker Desktop on Windows requires Hyper-V but it is not available on Windows Ho
 ```
 git config --global core.autocrlf input
 ```
-4) Clone this directory
+4) Clone this repository
 ```
 git clone https://github.com/yx0123/road-detector.git
 ```
@@ -69,11 +68,9 @@ docker run -v /c/Users/<your_username>/data:/data:ro -v /c/Users/<your_username>
 
 <br />
 <br />
-<br />
 
 
-
-# Original solution description is below. 
+## Original solution description
 
 
 SpaceNet 3 – Road Detection Marathon Match - Solution Description
@@ -81,13 +78,13 @@ SpaceNet 3 – Road Detection Marathon Match - Solution Description
 Overview
 
 
-1.** Introduction**
+1. **Introduction**
 Tell us a bit about yourself, and why you have decided to participate in the contest.
 
 
 Handle: pfr
 
-2.** Solution Development**
+2.**Solution Development**
 How did you solve the problem? What approaches did you try and what choices did you make, and why? Also, what alternative approaches did you consider?
 
  The overall approach was to create a dense bitmap predictor that would be fed into a vectorizer.
@@ -96,17 +93,17 @@ How did you solve the problem? What approaches did you try and what choices did 
  For vectorization, my plan was to develop a neural network-based vectorizer, but I didn't have enough time left for that, in light of the fact that the most straightforward solutions were not feasible due to stringent constraints on inference speed. So I just refined the simple threshold-based vectorizer which I was using initially, which was surprisingly effective.
  I only used RGB data, partly for faster development, and partly because I noticed issues in multispectral data which I didn't think would get fixed on short notice – the offending tiles were eventually removed, but the announcement was made only after the contest had ended.
 
-3.** Final Approach**
+3.**Final Approach**
 Please provide a bulleted description of your final approach. What ideas/decisions/features have been found to be the most important for your solution performance:
 
-** General approach:** The model uses two stages: an ensemble of 9 neural networks to create a dense 2D prediction, followed by a vectorizer.
-** Dense prediction:** Dense prediction is done with a stride of 4, which corresponds to an output spatial resolution of 1.2 m. Each pixel is labeled with one of 3 classes depending on distance to the closest road pixel: the distance thresholds are 6 and 12 source-image pixels. The network architecture is based on DPN-92 [Chen 2017], initialized with pre-trained weights published by their authors. Two changes are made: first, the layers after the last subsampling are removed and replaced with a thinner but deeper variant (block depth 12 to 16 instead of 3). Next, average pooling is removed and the 192 output channels of the linear layer are reshaped into an 8x8 3-channel block, so that dense prediction of a whole image can be done by executing the network once. Since predictions near the edges have less context available, the output is cropped by 24 pixels from all edges.
-** Training:** A random 352x352 crop of each tile is extracted, and a random flip or 90°-multiple rotation (or in 40% of samples, an arbitrary rotation) is applied. Training is done over 9 or 10 epochs by the Adam optimizer with a learning rate of 3.75e-4, a batch size of 12 per GPU, and a weight decay factor of 1e-7. The learning rate is divided by 5 every epoch after the first 6 epochs. Note: 6 of the models are only trained on two thirds of the dataset.
-** External clipping:** The last 3 models are not trained on pixels that are outside the region where image data is available or within 10 pixels of the tile boundary, and their output is forced to zero outside the image data region. They are also subject to additional training augmentation by intersecting the image data with a randomly-offset axis-aligned quadrant.
-** Prediction:** The source image is split into 4 overlapping corner patches. The model is then evaluated and the output is obtained by using the prediction for the patch closest to each pixel. This is done for all models, then averaged by arithmetic mean and reduced to a single channel by taking the probability of the closest-to-road class and adding 15% of the probability of the second-closest-to-road class.
-** Vectorization:** The first step is upsampling by a factor of 2 to get a 0.6 m spatial resolution, and thresholding to obtain the set of pixels having probability at least 28.8% of being a road pixel. The image is then padded slightly, denoised with a 5x5 closing kernel and skeletonized with the scikit-image implementation. This skeleton is converted into a vector network, which is then smoothed by the Shapely library. Finally, short isolated or dead-end segments, which can occur due to skeletonization, are removed.
+**General approach:** The model uses two stages: an ensemble of 9 neural networks to create a dense 2D prediction, followed by a vectorizer.
+**Dense prediction:** Dense prediction is done with a stride of 4, which corresponds to an output spatial resolution of 1.2 m. Each pixel is labeled with one of 3 classes depending on distance to the closest road pixel: the distance thresholds are 6 and 12 source-image pixels. The network architecture is based on DPN-92 [Chen 2017], initialized with pre-trained weights published by their authors. Two changes are made: first, the layers after the last subsampling are removed and replaced with a thinner but deeper variant (block depth 12 to 16 instead of 3). Next, average pooling is removed and the 192 output channels of the linear layer are reshaped into an 8x8 3-channel block, so that dense prediction of a whole image can be done by executing the network once. Since predictions near the edges have less context available, the output is cropped by 24 pixels from all edges.
+**Training:** A random 352x352 crop of each tile is extracted, and a random flip or 90°-multiple rotation (or in 40% of samples, an arbitrary rotation) is applied. Training is done over 9 or 10 epochs by the Adam optimizer with a learning rate of 3.75e-4, a batch size of 12 per GPU, and a weight decay factor of 1e-7. The learning rate is divided by 5 every epoch after the first 6 epochs. Note: 6 of the models are only trained on two thirds of the dataset.
+**External clipping:** The last 3 models are not trained on pixels that are outside the region where image data is available or within 10 pixels of the tile boundary, and their output is forced to zero outside the image data region. They are also subject to additional training augmentation by intersecting the image data with a randomly-offset axis-aligned quadrant.
+**Prediction:** The source image is split into 4 overlapping corner patches. The model is then evaluated and the output is obtained by using the prediction for the patch closest to each pixel. This is done for all models, then averaged by arithmetic mean and reduced to a single channel by taking the probability of the closest-to-road class and adding 15% of the probability of the second-closest-to-road class.
+**Vectorization:** The first step is upsampling by a factor of 2 to get a 0.6 m spatial resolution, and thresholding to obtain the set of pixels having probability at least 28.8% of being a road pixel. The image is then padded slightly, denoised with a 5x5 closing kernel and skeletonized with the scikit-image implementation. This skeleton is converted into a vector network, which is then smoothed by the Shapely library. Finally, short isolated or dead-end segments, which can occur due to skeletonization, are removed.
 
-4.** Open Source Resources, Frameworks and Libraries**
+4.**Open Source Resources, Frameworks and Libraries**
 Please specify the name of the open source resource along with a URL to where it's housed and it's license type:
 
  PyTorch, http://pytorch.org/, 3-clause BSD
@@ -118,7 +115,7 @@ Paper: Yunpeng Chen, Jianan Li, Huaxin Xiao, Xiaojie Jin, Shuicheng Yan, Jiashi 
  GDAL, http://www.gdal.org/, MIT License
  Standard Python scientific ecosystem (Python 3, Numpy, Scipy, Pandas, Pillow...)
 
-5.** Potential Algorithm Improvements**
+5.**Potential Algorithm Improvements**
 Please specify any potential improvements that can be made to the algorithm:
 
  Use more context to avoid tile boundary effects, which wasn't allowed in this contest.
@@ -126,13 +123,13 @@ Please specify any potential improvements that can be made to the algorithm:
  Use a more sophisticated vectorizer, such as graph-based regularization instead of thresholding, or an end-to-end neural network vectorizer.
  Experiment with deconvolution layers instead of the final linear layer.
 
-6.** Algorithm Limitations**
+6.**Algorithm Limitations**
 Please specify any potential limitations with the algorithm:
 
  The contest is designed so that the test tiles are from the same region as the train tiles, therefore the quality of generalization to new regions has not been measured. It is likely to be limited by the fact that the training data is only composed of a single viewpoint for each region.
  Applying the algorithm to a new AOI requires filling in 6 calibration coefficients (see param/adjust_rgb_v1.csv) derived from estimation of the black and white points of the 16-bit image. Automatic determination of the coefficients would be possible, but naive approaches may underperform in areas such as the Paris AOI that have a large proportion of forest tiles. Therefore for this contest manual adjustment of the 4 regions was chosen.
 
-7.** Deployment Guide**
+7.**Deployment Guide**
 Please provide the exact steps required to build and deploy the code:
 
 Prerequisites:
@@ -147,7 +144,7 @@ Run the command docker build -t spacenet3_pfr $PACKAGE_PATH
 Launch the docker container with
 nvidia-docker run -v $DATA_PATH:/data:ro -v $WDATA_PATH:/wdata --ipc=host -it spacenet3_pfr
 
-8.** Final Verification**
+8.**Final Verification**
 
 Please provide instructions that explain how to train the algorithm and have it execute against sample data:
 
